@@ -1,55 +1,73 @@
-# compiled files:
-*.o
-*.so
-*.a
-# temporary files:
-*.pyc
-*.bak
-*.swp
+# This file is used to ignore files which are generated
+# ----------------------------------------------------------------------------
+
 *~
-.*~
-*.old
-tmp*
-temp*
+*.autosave
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*.so.*
+*_pch.h.cpp
+*_resource.rc
+*.qm
 .#*
-\#*
-# tex files:
-*.log
-*.dvi
-*.aux
-*.blg
-*.idx
-*.nav
-*.out
-*.toc
-*.snm
-*.vrb
-# eclipse files:
-*.cproject
-*.project
-# misc:
+*.*#
+core
+!core/
+tags
 .DS_Store
-Trash
-# doconce:
-.*_html_file_collection
+.directory
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Thumbs.db
+*.res
+*.rc
+/.qmake.cache
+/.qmake.stash
 
-*.copyright
+# qtcreator generated files
+*.pro.user*
 
-*.copyright
+# xemacs temporary files
+*.flc
 
-*.exerinfo
+# Vim temporary files
+.*.swp
 
-doc/Projects/2016/Project2/.out.copyright
+# Visual Studio generated files
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*
 
-doc/Projects/2016/Project2/.project2_2016.copyright
+# MinGW generated files
+*.Debug
+*.Release
 
-*.exerinfo
+# Python byte code
+*.pyc
 
-*.dlog
-
-
-
-*.user
-
-doc/Programs/ParallelizationMPI/dill10
+# Binaries
+# --------
+*.dll
+*.exe
 
