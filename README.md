@@ -1,2 +1,2 @@
-# project1
-Computational Physics Project 1 documents, source, and misc. files.
+# project2
+Computational Physics Project 2 documents, source, and misc. files.
