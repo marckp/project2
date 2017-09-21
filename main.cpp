@@ -15,8 +15,8 @@ using namespace  arma;
 // Forward Function declarations
 double potential(double);
 void output(double, double, int, vec& );
-void Jacobi_rotate ( mat A, mat R, int k, int l, int n );
-double offdiag(mat A, int *p, int *q, int n);
+void Jacobi_rotate ( mat& A, mat& R, int k, int l, int n );
+double offdiag(mat& A, int *p, int *q, int n);
 
 // object for output files
 ofstream ofile;
@@ -60,14 +60,17 @@ int main(int argc, char* argv[])
 
     double  tolerance   = 1.0E-10;
     int     iterations  = 0;
-    double  maxnondiag  = 0.0;
+    double  maxnondiag  = 1.0E10;
     int     maxiter     = 100;
     while ( maxnondiag > tolerance && iterations <= maxiter)
     {
        int p, q;
        maxnondiag   = offdiag(A, &p, &q, n);
+       cout << "start state: " << p << " : " << q << endl;
+       cout << "max non-diagonal element: " << maxnondiag << endl;
        Jacobi_rotate(A, R, p, q, n);
        iterations++;
+       cout << "current iteration: " << iterations << endl;
     }
 
     cout << "A= " << A << endl;
@@ -105,7 +108,7 @@ void output(double RMin , double RMax, int Dim, vec& d)
 }  // end of function output
 
 //Jacobi's method for eigenvalues
-void Jacobi_rotate ( mat A, mat R, int k, int l, int n )
+void Jacobi_rotate (mat& A, mat& R, int k, int l, int n )
 {
   double s, c;
   if ( A(k,l) != 0.0 ) {
@@ -151,7 +154,7 @@ void Jacobi_rotate ( mat A, mat R, int k, int l, int n )
 } // end of function jacobi_rotate
 
 //  the offdiag function, using Armadillo
-double offdiag(mat A, int *p, int *q, int n)
+double offdiag(mat& A, int *p, int *q, int n)
 {
     // output max temporary processing matrix T
    double max;
