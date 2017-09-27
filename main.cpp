@@ -8,6 +8,8 @@
 #include <fstream>
 #include <iomanip>
 #include <armadillo>
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
 
 using namespace  std;
 using namespace  arma;
@@ -21,62 +23,84 @@ double offdiag(mat& A, int *p, int *q, int n);
 // object for output files
 ofstream ofile;
 
+// Test cases for the following functions
+// offdiag
+// Jacobi_rotate
+//
+
+double test_offdiag_func(double testentry, int n, int i, int j)
+{
+
+    mat T(n,n);
+    T.zeros();
+    T(i,j)              = testentry;
+    T(j,i)              = testentry;
+    double outputval    = offdiag(T,&i,&j,n);
+    cout << "testentry: " << testentry << endl;
+    cout << "outputval: " << outputval << endl;
+    return outputval;
+}
+
+TEST_CASE("Test of off diagonal", "[test_offdiag_func]") {
+    REQUIRE(test_offdiag_func(100.0,10,2,1)==100);
+    REQUIRE(test_offdiag_func(4.50,10,2,1)==4.50);
+    REQUIRE(test_offdiag_func(56.0,5,2,1)==28.0);
+};
 
 // Begin of main program
 
-int main(int argc, char* argv[])
-{
-    //  we have defined a matrix A and a matrix R for the eigenvector, both of dim n x n
-    //  The final matrix R has the eigenvectors in its row elements, it is set to one
-    //  for the diagonal elements in the beginning, zero else.
+//int main(int argc, char* argv[])
+//{
+//    //  we have defined a matrix A and a matrix R for the eigenvector, both of dim n x n
+//    //  The final matrix R has the eigenvectors in its row elements, it is set to one
+//    //  for the diagonal elements in the beginning, zero else.
 
-    // size of the square matrix
-    int n;
+//    // size of the square matrix
+//    int n;
 
-    // Output file stem
-    string filename;
-
-
-    // We read also the stem name for the output file and the dimension of the input matrix A we want
-    if( argc <= 1 ){
-          cout << "Bad Usage: " << argv[0] <<
-              " read also file name on same line and max power 10^n" << endl;
-          exit(1);
-    }
-        else{
-        filename    = argv[1]; // first command line argument after name of program
-        n           = atoi(argv[2]);
-        cout << "Output filename stem: " << filename << endl;
-        cout << "size of matrix under consideration: " << n << endl;
-    }
-
-    mat A = randu<mat>(n,n);
-    mat R(n,n);
-    R.zeros();
-
-    cout << "A= " << A << endl;
-    cout << "R= " << R << endl;
+//    // Output file stem
+//    string filename;
 
 
-    double  tolerance   = 1.0E-10;
-    int     iterations  = 0;
-    double  maxnondiag  = 1.0E10;
-    int     maxiter     = 100;
-    while ( maxnondiag > tolerance && iterations <= maxiter)
-    {
-       int p, q;
-       maxnondiag   = offdiag(A, &p, &q, n);
-       cout << "start state: " << p << " : " << q << endl;
-       cout << "max non-diagonal element: " << maxnondiag << endl;
-       Jacobi_rotate(A, R, p, q, n);
-       iterations++;
-       cout << "current iteration: " << iterations << endl;
-    }
+//    // We read also the stem name for the output file and the dimension of the input matrix A we want
+//    if( argc <= 1 ){
+//          cout << "Bad Usage: " << argv[0] <<
+//              " read also file name on same line and max power 10^n" << endl;
+//    }
+//    else
+//    {
+//        filename    = argv[1]; // first command line argument after name of program
+//        n           = atoi(argv[2]);
+//        cout << "Output filename stem: " << filename << endl;
+//        cout << "size of matrix under consideration: " << n << endl;
+//    }
 
-    cout << "A= " << A << endl;
-    cout << "R= " << R << endl;
+//    mat A = randu<mat>(n,n);
+//    mat R(n,n);
+//    R.zeros();
 
-}  //  end of main function
+//    cout << "A= " << A << endl;
+//    cout << "R= " << R << endl;
+
+//    double  tolerance   = 1.0E-10;
+//    int     iterations  = 0;
+//    double  maxnondiag  = 1.0E10;
+//    int     maxiter     = 100;
+//    while ( maxnondiag > tolerance && iterations <= maxiter)
+//    {
+//       int p, q;
+//       maxnondiag   = offdiag(A, &p, &q, n);
+//       //cout << "start state: " << p << " : " << q << endl;
+//       //cout << "max non-diagonal element: " << maxnondiag << endl;
+//       Jacobi_rotate(A, R, p, q, n);
+//       iterations++;
+//       //cout << "current iteration: " << iterations << endl;
+//    }
+
+//    cout << "A= " << A << endl;
+//    cout << "R= " << R << endl;
+
+//}  //  end of main function
 
 
 /*
@@ -107,33 +131,70 @@ void output(double RMin , double RMax, int Dim, vec& d)
   }
 }  // end of function output
 
+//  the offdiag function, using Armadillo find the largest off diagonal entry of the input matrix
+double offdiag(mat& A, int *p, int *q, int n)
+{
+    // output max temporary processing matrix T
+   double max;
+   for (int i = 0; i < n; ++i)
+   {
+       for ( int j = i+1; j < n; ++j)
+       {
+           double aij = fabs(A(i,j));
+           if ( aij > max)
+           {
+              cout << "The current max: " << aij << endl;
+              max = aij;  *p = i; *q = j;
+           }
+       }
+   }
+   return max;
+}
+
+
 //Jacobi's method for eigenvalues
 void Jacobi_rotate (mat& A, mat& R, int k, int l, int n )
 {
   double s, c;
-  if ( A(k,l) != 0.0 ) {
+  if ( A(k,l) != 0.0 )
+  {
     double t, tau;
     tau = (A(l,l) - A(k,k))/(2*A(k,l));
 
-    if ( tau >= 0 ) {
-      t = 1.0/(tau + sqrt(1.0 + tau*tau));
-    } else {
+    if ( tau >= 0 )
+    {
+      t = 1.0/(-tau + sqrt(1.0 + tau*tau));
+    }
+    else
+    {
       t = -1.0/(-tau +sqrt(1.0 + tau*tau));
     }
 
     c = 1/sqrt(1+t*t);
     s = c*t;
-  } else {
+  }
+  else
+  {
     c = 1.0;
     s = 0.0;
   }
-  double a_kk, a_ll, a_ik, a_il, r_ik, r_il;
-  a_kk = A(k,k);
-  a_ll = A(l,l);
+  double a_kk, a_ll, a_lk, a_kl, a_ik, a_il, r_ik, r_il;
+  a_kk   = A(k,k);
+  a_ll   = A(l,l);
+  a_lk   = A(l,k);
+  a_kl   = A(k,l);
   A(k,k) = c*c*a_kk - 2.0*c*s*A(k,l) + s*s*a_ll;
   A(l,l) = s*s*a_kk + 2.0*c*s*A(k,l) + c*c*a_ll;
-  A(k,l) = 0.0;  // hard-coding non-diagonal elements by hand
-  A(l,k) = 0.0;  // same here
+  if (l < k)
+  {
+    A(k,l) = (a_kk - a_ll)*c*s + a_kl*(c*c - s*s);
+    A(l,k) = (a_kk - a_ll)*c*s + a_lk*(c*c - s*s);
+  }
+  else
+  {
+    A(k,l) = (a_ll - a_kk)*c*s + a_kl*(c*c - s*s);
+    A(l,k) = (a_ll - a_kk)*c*s + a_lk*(c*c - s*s);
+  }
   for ( int i = 0; i < n; i++ ) {
     if ( i != k && i != l ) {
       a_ik = A(i,k);
@@ -153,24 +214,6 @@ void Jacobi_rotate (mat& A, mat& R, int k, int l, int n )
   return;
 } // end of function jacobi_rotate
 
-//  the offdiag function, using Armadillo
-double offdiag(mat& A, int *p, int *q, int n)
-{
-    // output max temporary processing matrix T
-   double max;
-   for (int i = 0; i < n; ++i)
-   {
-       for ( int j = i+1; j < n; ++j)
-       {
-           double aij = fabs(A(i,j));
-           if ( aij > max)
-           {
-              max = aij;  *p = i; *q = j;
-           }
-       }
-   }
-   return max;
-}
 
 
 //int       i, j, Dim, lOrbital;
