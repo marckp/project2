@@ -7,4 +7,5 @@ LIBS += -L/usr/local/lib
 LIBS += -larmadillo -llapack -lblas
 INCLUDEPATH += /usr/local/include
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    unit_test_main.cpp
